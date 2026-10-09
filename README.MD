@@ -1,199 +1,149 @@
-<p align="center">
-  <img src="store/banner.png" alt="Page2Copier" width="820">
-</p>
+# Page2Copier
 
-<h1 align="center">Page2Copier</h1>
-
-<p align="center">
-  Save any web page as a PDF or clean standalone HTML that looks exactly like the screen.<br>
-  Selectable text, working links, embedded styles, nothing cut off.
-</p>
+Simpan halaman web apa pun sebagai file PDF, PNG, atau HTML mandiri yang bersih persis seperti yang Anda lihat di layar.  
+Teks dapat dipilih, tautan tetap aktif, gaya CSS tersemat rapi, dan tidak ada konten yang terpotong.
 
 ---
 
-## Why version 2 exists
+## Mengapa Versi 2 Hadir
 
-Version 1 used `html2canvas`, which reads your DOM and then repaints it with its
-own partial reimplementation of CSS. Anything it does not implement is simply
-lost: backdrop filters, blend modes, `position: sticky`, modern grid tricks,
-canvas, cross origin images. That is where the weird layouts, the blank regions
-and the missing content came from.
+Versi 1 menggunakan `html2canvas`, yang membaca DOM halaman dan merender ulang menggunakan implementasi CSS-nya sendiri yang terbatas. Fitur-fitur CSS modern yang tidak didukung akan hilang begitu saja: *backdrop-filter*, *blend-mode*, `position: sticky`, trik CSS Grid modern, elemen canvas, dan gambar *cross-origin*. Hal tersebut sering menyebabkan tata letak rusak, area kosong, atau konten hilang.
 
-Version 2 throws all of that away. There is no rendering library in this
-repository any more. Page2Copier now drives Chrome's own renderer through the
-DevTools protocol, so the pixels and the text in the PDF come from the exact
-same engine that painted the tab you are looking at. Furthermore, Page2Copier
-includes built-in clean standalone HTML export that preserves CSS stylesheets,
-form values, and images without runtime scripts.
+Versi 2 merombak total pendekatan tersebut. Ekstensi ini tidak lagi memakai pustaka perender eksternal. Page2Copier mengontrol mesin perender Chrome secara langsung melalui Chrome DevTools Protocol (CDP). Dengan demikian, piksel dan teks pada file hasil ekspor dihasilkan langsung dari mesin perender yang sama dengan yang menampilkan tab di browser Anda. Selain itu, Page2Copier dilengkapi fitur ekspor HTML mandiri (*clean standalone HTML*) yang menyertakan stylesheet CSS, status formulir, serta gambar tanpa skrip runtime yang tidak perlu.
 
-## Two ways to capture
+---
 
-| | Text mode | Snapshot mode |
+## Dua Mode Penangkapan PDF
+
+| Fitur | Mode Teks (*Text mode*) | Mode Snapshot (*Snapshot mode*) |
 | --- | --- | --- |
-| Engine | `Page.printToPDF`, the browser print pipeline | `Page.captureScreenshot`, the compositor |
-| Text | Real, selectable, searchable | Rasterised |
-| Links | Live | Live, added as PDF link areas |
-| File size | Small, tens of kilobytes | Larger, one image per sheet |
-| Best for | Articles, docs, receipts, invoices, anything you will search | Canvas, WebGL, maps, charts, blend modes, backdrop blur |
+| **Mesin** | `Page.printToPDF` (alur cetak browser) | `Page.captureScreenshot` (kompositor) |
+| **Teks** | Teks asli, bisa dipilih dan dicari | Raster / berbasis gambar |
+| **Tautan** | Aktif secara native | Aktif (ditambahkan sebagai area tautan PDF) |
+| **Ukuran File** | Ringan, hanya puluhan kilobyte | Lebih besar, satu gambar per halaman |
+| **Cocok Untuk** | Artikel, dokumen, struk/faktur, teks yang perlu dicari | Canvas, WebGL, peta, grafik, *blend mode*, efek *blur* |
 
-Text mode is the default, and it renders with **screen media emulation** rather
-than print media. That single detail is why the output keeps the layout you were
-actually looking at instead of a site's neglected print stylesheet.
+Mode Teks adalah mode bawaan (*default*), yang menggunakan **emulasi media layar (screen media emulation)** alih-alih media cetak (*print media*). Hal ini membuat hasil cetak tetap mempertahankan tampilan desain web aslinya dan tidak dirusak oleh stylesheet cetak (*print CSS*) situs yang usang.
 
-## What it fixes
+---
 
-Most "page to PDF" tools fail in the same handful of ways. Each one is handled
-before a single byte is rendered:
+## Masalah yang Diperbaiki Secara Otomatis
 
-- **Content cut off at the right edge.** The layout is scaled so the full
-  document width fits the sheet, rather than being sliced.
-- **Half the page missing.** The document is scrolled end to end first so lazy
-  loaders, infinite feeds and viewport triggered images all fire.
-- **Images that never arrive.** Deferred images are forced eager and awaited,
-  and web fonts are awaited too.
-- **A cookie wall over every page.** Consent walls, chat bubbles, app install
-  bars and newsletter overlays are removed.
-- **A sticky header stamped on all forty sheets.** Pinned elements are unpinned
-  so they appear once, in the flow, where they belong.
-- **Panels showing only their first three lines.** Inner scroll areas are
-  unrolled and collapsed `<details>` are opened.
-- **Tables and code blocks split mid row.** Page breaks avoid cutting through
-  images, tables, figures and preformatted blocks.
+Sebagian besar alat "halaman web ke PDF" mengalami masalah yang sama. Page2Copier menanganinya secara otomatis sebelum dokumen dirender:
 
-Every one of those changes is recorded and reverted the moment the capture is
-written. The tab is left exactly as it was found, down to the style attributes.
+- **Konten terpotong di tepi kanan**: Tata letak disesuaikan skalanya agar lebar penuh dokumen pas dengan ukuran lembaran kertas.
+- **Setengah halaman hilang**: Halaman di-*scroll* secara otomatis dari atas ke bawah terlebih dahulu agar *lazy loading*, *infinite feed*, dan gambar yang dipicu viewport termuat sepenuhnya.
+- **Gambar yang tidak muncul**: Gambar yang ditunda (*deferred images*) dan font web dipaksa termuat dan ditunggu hingga selesai.
+- **Banner persetujuan cookie & pop-up**: Pop-up persetujuan cookie, balon obrolan (*chat widgets*), bar instalasi aplikasi, dan overlay buletin dibersihkan.
+- **Header sticky yang menumpuk di setiap halaman**: Elemen yang melayang (*pinned/sticky*) diubah menjadi posisi normal agar hanya muncul satu kali di posisi aslinya.
+- **Panel konten hanya menampilkan beberapa baris**: Area gulir internal (*inner scroll*) dibuka penuh dan elemen `<details>` yang tertutup akan dibuka.
+- **Tabel dan blok kode terpotong di tengah baris**: Pemotongan halaman menghindari memotong gambar, tabel, gambar ilustrasi (*figure*), dan blok kode preformatted.
 
-## Features
+Setiap perubahan di atas dicatat dan dikembalikan ke kondisi semula tepat setelah penangkapan selesai. Kondisi tab browser Anda tetap bersih seperti semula.
 
-**Capture**
+---
 
-- **Save Page as PDF**: whole page, in either text or snapshot mode.
-- **Save Page as HTML**: export the entire page as a clean, self-contained HTML file with stylesheets inlined, canvas rendered to images, URLs absolutized, and scripts stripped for safe offline viewing.
-- **Save Page as PNG**: capture full-page high-resolution PNG images with automatic multi-slice canvas stitching for tall pages.
-- **Element picker (PDF, PNG & HTML)**: hover to outline a block, arrow keys to widen or narrow,
-  press `M` to toggle between PDF, PNG, and standalone HTML mode, and click to save just that block.
-  - In PDF mode, the sheet is cut to the block size.
-  - In PNG mode, saves a crisp, cropped image of the selected element.
-  - In HTML mode, extracts clean, standalone HTML with all computed styling, stylesheets, custom properties, form states, and asset URLs fully resolved.
-- **Selection**: save only what you highlighted
-- **Reader mode**: the article alone, in book typography, with a masthead
-  carrying the title, site and date
-- **Batch**: save every tab in the window into one dated folder
-- **Linked pages**: right click any link to save its target without leaving the
-  page you are on
+## Fitur Utama
 
-**Output**
+### Penangkapan (Capture)
+- **Simpan Halaman sebagai PDF**: Mendukung mode teks maupun snapshot.
+- **Simpan Halaman sebagai HTML**: Mengekspor seluruh halaman menjadi satu file HTML mandiri yang bersih (*self-contained*), dengan CSS tersemat (*inline*), elemen canvas diubah menjadi gambar, URL diubah menjadi absolut, dan script dihapus agar aman dibuka secara luring (*offline*).
+- **Simpan Halaman sebagai PNG**: Menangkap seluruh halaman web menjadi gambar PNG beresolusi tinggi dengan penggabungan multi-irisan (*multi-slice stitching*) otomatis untuk halaman yang sangat panjang.
+- **Pemilih Elemen (Element Picker - PDF, PNG & HTML)**: Arahkan kursor untuk menyorot blok elemen, gunakan tombol panah untuk memperluas/mempersempit area, tekan tombol `M` untuk beralih mode (PDF, PNG, atau HTML), lalu klik untuk menyimpan elemen tersebut saja.
+  - Mode PDF: Ukuran kertas disesuaikan tepat dengan ukuran elemen.
+  - Mode PNG: Menyimpan gambar potongan (*crop*) elemen dengan resolusi tajam.
+  - Mode HTML: Mengekstrak elemen HTML mandiri lengkap dengan computed styles, CSS stylesheets, variabel custom, dan URL aset yang telah diresolusikan.
+- **Seleksi Teks**: Simpan hanya bagian teks yang sedang Anda sorot/blok.
+- **Mode Baca (Reader Mode)**: Mengambil artikel utama saja dengan tipografi buku yang rapi serta kop informasi judul, situs, dan tanggal.
+- **Ekspor Massal (Batch)**: Simpan semua tab yang sedang terbuka di jendela browser ke dalam satu folder bertanggal.
+- **Halaman Tertaut**: Klik kanan tautan apa pun untuk langsung menyimpannya tanpa harus berpindah halaman.
 
-- A4, Letter, Legal, Tabloid, A3, A5, or a sheet cut to the page width
-- Portrait or landscape, four margin presets
-- One continuous sheet with no page breaks at all
-- Header and footer with title, address, page numbers and date
-- Light or dark theme forced through `prefers-color-scheme` emulation
-- Custom layout width, for rendering a responsive site at desktop size
-- Lossless or quality controlled snapshots, up to 4x resolution
-- Clean standalone HTML exports with scripts sanitized and CSS embedded
-- Full-page PNG exports with multi-slice stitching support
+### Pengaturan Output
+- Ukuran lembar: A4, Letter, Legal, Tabloid, A3, A5, atau ukuran pas sesuai lebar halaman web.
+- Orientasi tegak (*portrait*) atau mendatar (*landscape*), dilengkapi 4 pilihan preset margin.
+- Pilihan satu lembar bersambung tanpa jeda halaman (*continuous sheet*).
+- Header dan footer opsional (judul, URL, nomor halaman, dan tanggal).
+- Pilihan tema terang atau gelap melalui emulasi `prefers-color-scheme`.
+- Kustomisasi lebar resolusi tata letak untuk merender tampilan desktop pada situs responsif.
+- Kualitas snapshot tanpa kompresi (*lossless*) atau kualitas yang dapat disesuaikan hingga resolusi 4x.
 
-**Workflow**
+### Alur Kerja & Pintasan Keyboard
+- **Preset per Situs**: Simpan preferensi khusus untuk domain tertentu secara otomatis.
+- Format penamaan file dinamis: `{title}`, `{domain}`, `{path}`, `{date}`, `{time}`.
+- Subfolder unduhan yang dapat ditentukan.
+- Pintasan keyboard bawaan:
+  - `Alt+Shift+P`: Simpan halaman sebagai PDF.
+  - `Alt+Shift+S`: Simpan halaman sebagai HTML.
+  - `Alt+Shift+I`: Simpan halaman sebagai PNG.
+  - `Alt+Shift+E`: Buka pemilih elemen (*Element Picker*).
+- Menu klik kanan (konteks) untuk akses cepat ke semua fungsi ekspor.
+- Status progres ditampilkan langsung di halaman web, sehingga tetap berjalan meski popup ditutup.
 
-- **Site presets**: any site can pin its own settings. Your docs site prints as
-  a clean article, your dashboard as a pixel snapshot, and neither needs a
-  second thought
-- File name templates: `{title}`, `{domain}`, `{path}`, `{date}`, `{time}`
-- Optional download subfolder
-- `Alt+Shift+P` saves the page as PDF, `Alt+Shift+S` saves the page as HTML, `Alt+Shift+I` saves the page as PNG
-- `Alt+Shift+E` opens element picker (press `M` in picker to cycle between PDF, PNG & HTML)
-- Right click menu for page (PDF/HTML/PNG), selection, element (PDF/PNG/HTML), link and reader mode
-- Progress shown in the page itself, so closing the popup does not lose it
+---
 
-## Install
+## Cara Pasang
 
-**From source**
+1. Unduh atau clone repositori ini:
+   ```bash
+   git clone https://github.com/webmestudio/page2copier.git
+   ```
+2. Buka **`chrome://extensions`** pada browser Chrome atau browser berbasis Chromium lainnya.
+3. Aktifkan sakelar **Mode pengembang** (*Developer mode*) di pojok kanan atas.
+4. Klik tombol **Muat yang belum dibongkar** (*Load unpacked*) dan pilih folder proyek ini.
 
-```bash
-git clone https://github.com/guillesotelo/page2pdf.git
-```
+> Ekstensi ini tidak memerlukan proses *build* atau instalasi dependensi (`node_modules`). Kode di dalam repositori dapat langsung dijalankan.
 
-1. Open `chrome://extensions`
-2. Turn on **Developer mode**
-3. Click **Load unpacked** and choose the cloned folder
+---
 
-There is no build step. No bundler, no dependencies, no `node_modules`. What is
-in the repository is what runs.
+## Informasi Izin Debugger
 
-## About the debugger permission
+Page2Copier membutuhkan izin `debugger` karena ini merupakan satu-satunya cara bagi ekstensi browser untuk mengakses perintah `Page.printToPDF` dan `Page.captureScreenshot` pada Chromium DevTools Protocol.
 
-Page2Copier asks for the `debugger` permission because that is the only way an
-extension can reach `Page.printToPDF` and `Page.captureScreenshot`, the two
-commands that make output match the screen. While a capture is running, Chrome
-shows a "Page2Copier is debugging this browser" bar. It disappears the moment the
-capture finishes, usually in a second or two.
+Saat proses penangkapan sedang berlangsung, browser akan menampilkan notifikasi bilah *"Page2Copier is debugging this browser"*. Notifikasi ini akan otomatis hilang setelah proses penangkapan selesai (biasanya hanya 1-2 detik). Ekstensi ini hanya terhubung ke tab yang Anda pilih dan langsung memutuskan koneksi melalui blok `finally` demi keamanan.
 
-The extension attaches only to the tab you asked it to save, only while it is
-saving, and detaches in a `finally` block so a failure cannot leave the session
-open. Nothing is read from any other tab.
+---
 
-## Privacy
+## Privasi
 
-Nothing leaves your machine. There is no server, no analytics, no telemetry and
-no network request of any kind. Pages are rendered locally and files go
-straight to your downloads folder. Settings and site presets live in
-`chrome.storage.sync`, which is your own browser profile.
+Seluruh pemrosesan dilakukan secara lokal di perangkat Anda. Tidak ada server eksternal, analitik, telemetri, ataupun permintaan jaringan yang dikirimkan ke luar. Halaman dirender secara lokal dan file langsung disimpan ke folder unduhan Anda.
 
-## Layout
+---
+
+## Struktur Folder
 
 ```
-manifest.json
-icons/                     Toolbar and store icons
+manifest.json              Manifest konfigurasi ekstensi
+icons/                     Ikon ekstensi
 src/
   background/
-    service-worker.js      Entry points, one capture per tab, progress, menus
-    capture.js             The two capture pipelines
-    cdp.js                 Promise wrapper around chrome.debugger
-    prepare.js             Everything injected into the page before capture
-    pdf-writer.js          Dependency free PDF assembly for snapshot mode
-    settings.js            Defaults and per site presets
-    download.js            File naming and saving
+    service-worker.js      Titik masuk, manajemen tab, progres, dan menu konteks
+    capture.js             Alur logika penangkapan PDF, PNG, dan HTML
+    cdp.js                 Wrapper Promise untuk chrome.debugger
+    prepare.js             Skrip injeksi untuk pembersihan halaman sebelum capture
+    pdf-writer.js          Pembuat file PDF mandiri tanpa dependensi untuk mode snapshot
+    settings.js            Pengaturan default dan preset per situs
+    download.js            Format nama file dan proses penyimpanan
   content/
-    picker.js              Element picker overlay
-    hud.js                 In page progress pill
+    picker.js              Overlay visual untuk pemilih elemen
+    hud.js                 Indikator status progres di dalam halaman
   ui/
-    popup.html/.js         The popup
-    options.html/.js       Settings
-    glass.css              Shared design system
-    offscreen.html/.js     Blob URL helper for downloads
-store/                     Logo, tiles and store screenshots
+    popup.html/.js         Tampilan popup utama
+    options.html/.js       Halaman pengaturan opsi
+    glass.css              Sistem desain antarmuka
+    offscreen.html/.js     Helper blob URL untuk proses unduhan
+store/                     Materi dokumentasi dan aset store
 ```
 
-The snapshot PDF writer is worth a look if you are curious: JPEG captures are
-copied into the file as `DCTDecode` streams without being re-encoded, and
-lossless captures go in as raw RGB under `FlateDecode` compressed with
-`CompressionStream`. That is the whole of it, in roughly two hundred lines, with
-no library.
+---
 
-## Known limits
+## Batasan yang Diketahui
 
-- Chrome does not allow extensions on `chrome://` pages, the Web Store, or other
-  extensions' pages. Nothing can be done about this from inside an extension.
-- If DevTools is already open on a tab, the debugger cannot attach. Close it and
-  retry.
-- Batch capture uses text mode for background tabs, because a tab that is not
-  being composited has no pixels to read.
-- Pages taller than roughly 200 inches of PDF cannot be a single continuous
-  sheet, which is a hard limit of the PDF format. They paginate instead.
+- Ekstensi Chrome tidak dapat berjalan pada halaman internal browser seperti `chrome://`, halaman Chrome Web Store, atau halaman ekstensi lain karena pembatasan keamanan dari Chrome.
+- Jika panel DevTools sedang terbuka pada tab target, *debugger* tidak dapat terhubung. Tutup DevTools terlebih dahulu sebelum melakukan penangkapan.
+- Dokumen yang memiliki panjang lebih dari sekitar 200 inci akan dibagi ke dalam beberapa halaman PDF karena batasan batas format spesifikasi PDF.
 
-## Support
+---
 
-If you find Page2Copier useful, you can support development on Ko-fi:
+## Lisensi
 
-<a href='https://ko-fi.com/D4R428HJJJ' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Support me on Ko-fi' /></a>
-
-## Feedback
-
-Issues and pull requests are welcome on
-[GitHub](https://github.com/guillesotelo/page2pdf), or email
-[guille.sotelo.cloud@gmail.com](mailto:guille.sotelo.cloud@gmail.com).
-
-## Licence
-
-MIT
+Proyek ini dilisensikan di bawah lisensi [MIT](LICENSE).
