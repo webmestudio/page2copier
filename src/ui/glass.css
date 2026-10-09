@@ -1,0 +1,519 @@
+/* Page2Copier glass design system
+   One palette, one set of surfaces, shared by the popup and the settings page. */
+
+:root {
+  --indigo-600: #4f46e5;
+  --indigo-500: #6366f1;
+  --indigo-400: #818cf8;
+  --cyan-400: #22d3ee;
+  --teal-300: #5eead4;
+
+  --ink: #e9eeff;
+  --ink-soft: #a9b3d6;
+  --ink-faint: #7d87ab;
+
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-strong: rgba(255, 255, 255, 0.1);
+  --edge: rgba(255, 255, 255, 0.14);
+  --edge-soft: rgba(255, 255, 255, 0.08);
+  --glow: 0 1px 0 rgba(255, 255, 255, 0.16) inset;
+
+  --radius-lg: 18px;
+  --radius: 13px;
+  --radius-sm: 9px;
+
+  --accent: linear-gradient(118deg, var(--indigo-500) 0%, #4f46e5 42%, var(--cyan-400) 100%);
+  --danger: #fb7185;
+  --ok: var(--teal-300);
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: #0b0e1c;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The aurora field every glass surface sits on. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 12% -10%, #2b2f6b 0%, transparent 58%),
+    radial-gradient(100% 80% at 96% 4%, #0e4f6b 0%, transparent 55%),
+    radial-gradient(120% 120% at 50% 118%, #241b52 0%, transparent 60%),
+    #0b0e1c;
+}
+
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(closest-side, rgba(99, 102, 241, 0.5), transparent 70%) 18% 22% / 46% 46% no-repeat,
+    radial-gradient(closest-side, rgba(34, 211, 238, 0.36), transparent 70%) 84% 8% / 40% 40% no-repeat,
+    radial-gradient(closest-side, rgba(129, 140, 248, 0.3), transparent 70%) 58% 92% / 52% 52% no-repeat;
+  filter: blur(28px);
+  opacity: 0.55;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------ surfaces ------------------------------ */
+
+.glass {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045));
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 18px 44px rgba(4, 7, 22, 0.5),
+    var(--glow);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--edge-soft);
+  border-radius: var(--radius);
+  padding: 12px 13px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.row.between {
+  justify-content: space-between;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.muted {
+  color: var(--ink-soft);
+}
+
+.tiny {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ------------------------------ controls ------------------------------ */
+
+button,
+select,
+input[type='text'],
+input[type='number'] {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--edge);
+  background: var(--panel-strong);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.12s ease, background 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+  box-shadow: var(--glow);
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #f7faff;
+  padding: 13px 16px;
+  font-size: 14px;
+  box-shadow:
+    0 10px 26px rgba(79, 70, 229, 0.42),
+    var(--glow);
+}
+
+.btn.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn.emerald {
+  background: linear-gradient(118deg, #059669 0%, #10b981 50%, #14b8a6 100%);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #f7faff;
+  box-shadow:
+    0 10px 26px rgba(16, 185, 129, 0.38),
+    var(--glow);
+}
+
+.btn.emerald:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn.sky {
+  background: linear-gradient(118deg, #0284c7 0%, #0ea5e9 50%, #38bdf8 100%);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #f7faff;
+  box-shadow:
+    0 10px 26px rgba(14, 165, 233, 0.38),
+    var(--glow);
+}
+
+.btn.sky:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 500;
+  padding: 9px 11px;
+  font-size: 12px;
+}
+
+.btn.icon {
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* Segmented control */
+.segment {
+  display: flex;
+  padding: 3px;
+  gap: 3px;
+  background: rgba(9, 12, 28, 0.42);
+  border: 1px solid var(--edge-soft);
+  border-radius: var(--radius);
+}
+
+.segment button {
+  flex: 1;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 9px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12.5px;
+  transition: color 0.16s ease, background 0.16s ease;
+}
+
+.segment button[aria-pressed='true'] {
+  color: #f7faff;
+  background: var(--accent);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.36), var(--glow);
+}
+
+select {
+  appearance: none;
+  width: 100%;
+  padding: 9px 30px 9px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--edge-soft);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9b3d6' stroke-width='2.4' stroke-linecap='round'><path d='m6 9 6 6 6-6'/></svg>")
+      no-repeat right 9px center / 13px,
+    rgba(9, 12, 28, 0.42);
+  cursor: pointer;
+}
+
+select:focus-visible,
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--indigo-400);
+  outline-offset: 2px;
+}
+
+select option {
+  background: #161a33;
+  color: var(--ink);
+}
+
+input[type='text'],
+input[type='number'] {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--edge-soft);
+  background: rgba(9, 12, 28, 0.42);
+}
+
+input::placeholder {
+  color: #5f688a;
+}
+
+/* Switch */
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  padding: 7px 0;
+  user-select: none;
+}
+
+.switch .text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.switch .name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(9, 12, 28, 0.6);
+  border: 1px solid var(--edge-soft);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #cdd5f5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1), background 0.2s ease;
+}
+
+.switch input:checked + .track {
+  background: var(--accent);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.switch input:checked + .track::after {
+  transform: translateX(16px);
+  background: #ffffff;
+}
+
+.switch input:focus-visible + .track {
+  outline: 2px solid var(--indigo-400);
+  outline-offset: 2px;
+}
+
+/* Chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--edge-soft);
+  color: var(--ink-soft);
+}
+
+.chip.accent {
+  background: linear-gradient(120deg, rgba(99, 102, 241, 0.34), rgba(34, 211, 238, 0.26));
+  border-color: rgba(148, 163, 255, 0.4);
+  color: #e6ecff;
+}
+
+/* Divider */
+.rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--edge), transparent);
+  margin: 4px 0;
+  border: 0;
+}
+
+/* Status line */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  min-height: 18px;
+  color: var(--ink-soft);
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.status.ok {
+  color: var(--ok);
+}
+
+.spinner {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--teal-300);
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progress {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+/* ------------------------------ Ko-fi Support ------------------------------ */
+
+.btn.kofi-btn {
+  background: linear-gradient(118deg, #4225e6 0%, #5333f0 50%, #684bf5 100%);
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  box-shadow:
+    0 10px 24px rgba(66, 37, 230, 0.45),
+    var(--glow);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn.kofi-btn:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 28px rgba(66, 37, 230, 0.55),
+    var(--glow);
+}
+
+.kofi-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(66, 37, 230, 0.25);
+  border: 1px solid rgba(124, 93, 250, 0.4);
+  border-radius: 999px;
+  color: #ded9ff;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.12s ease, color 0.16s ease;
+}
+
+.kofi-btn-sm:hover {
+  background: #4225e6;
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.kofi-panel .kofi-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+

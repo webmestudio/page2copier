@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page2PDF</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #303030;
+        color: #ffffff;
+        width: 250px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 16px;
+        margin: 1.5rem 0;
+      }
+      a {
+        color: #78e08f;
+        text-decoration: none;
+        transition: 0.2s;
+      }
+      a:hover {
+        opacity: 0.7;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #c4c5dd;
+        border: 1px solid #c4c5dd;
+        border-radius: 0.5rem;
+        color: #303030;
+        font-size: 16px;
+        transition: 0.2s;
+        cursor: pointer;
+        margin-top: 1rem;
+      }
+      button:hover {
+        background-color: transparent;
+        color: #c4c5dd;
+      }
+      .loader {
+        display: none;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #3498db;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 0.7s linear infinite;
+        margin: auto;
+      }
+
+      .loaderText {
+        display: none;
+        margin: 5px;
+        font-weight: bold;
+      }
+
+      .footer {
+        margin: 3rem 0 0 0;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <script src="jsPDF/es6-promise-auto-min.js"></script>
+    <script src="jsPDF/html2canvas.min.js"></script>
+    <script src="jsPDF/jspdf-html2canvas.min.js"></script>
+    
+    <script src="jsPDF/jspdf.umd.js"></script>
+    <script src="jsPDF/jspdf.umd.min.js"></script>
+    <script src="jsPDF/html2pdf.js"></script>
+
+  </head>
+  <body>
+    <h1>Page2PDF</h1>
+    <p>This extension converts any page to a PDF file.</p>
+    <button id="convertButton">Convert to PDF</button>
+    <div class="loader"></div>
+    <p class="loaderText">Generating PDF...</p>
+    <!-- <p>Click the button below to deactivate the extension:</p>
+    <button id="deactivateButton">Deactivate Extension</button> -->
+    <p class="footer">
+      For more information or to report issues, visit the
+      <a href="https://github.com/guillesotelo/page2pdf.git" target="_blank"
+        >GitHub page</a
+      >.<br><br>
+      <a
+        href="https://ko-fi.com/D4R428HJJJ"
+        target="_blank"
+        style="display: inline-block; padding: 8px 14px; background: #4225e6; color: #ffffff; border-radius: 6px; font-weight: bold; text-decoration: none;"
+      >
+        ☕ Support me on Ko-fi
+      </a>
+    </p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

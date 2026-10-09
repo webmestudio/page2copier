@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="46%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+
+    <linearGradient id="sheen" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.42"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="paper" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dbe4ff"/>
+    </linearGradient>
+
+    <linearGradient id="fold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c7d2fe"/>
+      <stop offset="100%" stop-color="#8ea2f5"/>
+    </linearGradient>
+
+    <linearGradient id="arrow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a5f3fc"/>
+    </linearGradient>
+
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0b1030" flood-opacity="0.34"/>
+    </filter>
+
+    <filter id="arrowShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#071026" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Tile -->
+  <rect x="4" y="4" width="120" height="120" rx="30" fill="url(#tile)"/>
+  <rect x="4" y="4" width="120" height="120" rx="30" fill="url(#sheen)"/>
+  <rect x="4.75" y="4.75" width="118.5" height="118.5" rx="29.25" fill="none"
+        stroke="#ffffff" stroke-opacity="0.34" stroke-width="1.5"/>
+
+  <!-- Page -->
+  <g filter="url(#soft)">
+    <path d="M36 27h34l22 22v44a9 9 0 0 1-9 9H36a9 9 0 0 1-9-9V36a9 9 0 0 1 9-9z"
+          fill="url(#paper)"/>
+    <path d="M70 27l22 22H79a9 9 0 0 1-9-9V27z" fill="url(#fold)"/>
+  </g>
+
+  <!-- Text lines on the page -->
+  <g fill="#8ea2f5" opacity="0.75">
+    <rect x="39" y="58" width="34" height="5.5" rx="2.75"/>
+    <rect x="39" y="70" width="42" height="5.5" rx="2.75"/>
+  </g>
+
+  <!-- Save arrow -->
+  <g filter="url(#arrowShadow)">
+    <circle cx="90" cy="90" r="23" fill="#1e2450" fill-opacity="0.34"/>
+    <circle cx="90" cy="90" r="23" fill="url(#tile)"/>
+    <circle cx="90" cy="90" r="23" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2.5"/>
+    <path d="M90 78v20m0 0l-8.5-8.5M90 98l8.5-8.5"
+          fill="none" stroke="url(#arrow)" stroke-width="7"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="78" y="103" width="24" height="6" rx="3" fill="url(#arrow)"/>
+  </g>
+</svg>

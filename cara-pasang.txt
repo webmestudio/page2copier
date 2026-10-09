@@ -1,0 +1,11 @@
+CARA PASANG
+1. buka manage extension di browser chrome atau edge
+2. aktifkan developer mode
+3. klik load unpacked
+4. masukan dan pilih folder page2copier
+5. selesai
+
+CARA PENGGUNAAN
+1. klik kanan di website target nya
+2. pilih page2copier 
+3. pilih aksi dan selesai

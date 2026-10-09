@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page2Copier settings</title>
+    <link rel="stylesheet" href="glass.css" />
+    <style>
+      body {
+        min-height: 100vh;
+        padding: 46px 22px 70px;
+      }
+
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+      }
+
+      header.hero {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+
+      header.hero img {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        box-shadow: 0 14px 34px rgba(79, 70, 229, 0.42);
+      }
+
+      header.hero h1 {
+        margin: 0 0 4px;
+        font-size: 25px;
+        letter-spacing: -0.02em;
+      }
+
+      header.hero p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--ink-soft);
+        max-width: 52ch;
+        line-height: 1.55;
+      }
+
+      .welcome {
+        display: none;
+        margin-bottom: 20px;
+        padding: 16px 18px;
+        line-height: 1.6;
+        font-size: 13.5px;
+      }
+
+      .welcome b {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 15px;
+      }
+
+      section.panel {
+        padding: 20px 22px;
+        margin-bottom: 16px;
+      }
+
+      section.panel > h2 {
+        margin: 0 0 4px;
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      section.panel > .sub {
+        margin: 0 0 16px;
+        font-size: 12px;
+        color: var(--ink-faint);
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 14px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .switches {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2px 26px;
+      }
+
+      .tokens {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .tokens code {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 3px 7px;
+        border-radius: 6px;
+        background: rgba(9, 12, 28, 0.5);
+        border: 1px solid var(--edge-soft);
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+
+      .tokens code:hover {
+        color: var(--ink);
+        border-color: var(--edge);
+      }
+
+      table.presets {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      table.presets th {
+        text-align: left;
+        font-size: 11px;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        padding: 0 0 9px;
+        font-weight: 600;
+      }
+
+      table.presets td {
+        padding: 9px 0;
+        border-top: 1px solid var(--edge-soft);
+        vertical-align: middle;
+      }
+
+      table.presets td.host {
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+
+      table.presets td.meta {
+        color: var(--ink-faint);
+        font-size: 12px;
+      }
+
+      table.presets td.act {
+        text-align: right;
+      }
+
+      .empty {
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        padding: 8px 0 2px;
+      }
+
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+        margin-top: 22px;
+      }
+
+      .saved {
+        font-size: 12px;
+        color: var(--ok);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      .saved.show {
+        opacity: 1;
+      }
+
+      .range {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      input[type='range'] {
+        flex: 1;
+        accent-color: var(--indigo-500);
+      }
+
+      .range output {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-soft);
+        min-width: 34px;
+        text-align: right;
+      }
+
+      a {
+        color: var(--indigo-400);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop"></div>
+
+    <div class="wrap">
+      <header class="hero">
+        <img src="../../icons/icon128.png" alt="" />
+        <div>
+          <h1>Page2Copier</h1>
+          <p>
+            Defaults for every capture. Any site can override these with its own preset, saved from
+            the popup.
+          </p>
+        </div>
+      </header>
+
+      <div class="glass welcome" id="welcome">
+        <b>Two ways to save a page</b>
+        Text mode drives the browser print engine, so the PDF keeps selectable text and working
+        links. Snapshot mode captures the painted pixels instead, which is what you want for canvas,
+        maps and charts. Press <b style="display:inline">Alt+Shift+P</b> to save the tab you are on,
+        or right click anywhere for the rest.
+      </div>
+
+      <section class="glass panel">
+        <h2>Output</h2>
+        <p class="sub">How the page is turned into a document.</p>
+        <div class="grid">
+          <div class="field">
+            <span class="label">Default mode</span>
+            <select id="mode">
+              <option value="text">Text, selectable and small</option>
+              <option value="snapshot">Snapshot, painted pixels</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="label">Paper</span>
+            <select id="paper"></select>
+          </div>
+          <div class="field">
+            <span class="label">Orientation</span>
+            <select id="orientation">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="label">Margin</span>
+            <select id="margin"></select>
+          </div>
+          <div class="field">
+            <span class="label">Stylesheet</span>
+            <select id="media">
+              <option value="screen">Match the screen</option>
+              <option value="print">Use the site print styles</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="label">Colour scheme</span>
+            <select id="darkPages">
+              <option value="keep">Keep the page as it looks</option>
+              <option value="light">Ask the site for light</option>
+              <option value="dark">Ask the site for dark</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass panel">
+        <h2>Fidelity</h2>
+        <p class="sub">The switches that decide whether the PDF matches the screen.</p>
+        <div class="switches">
+          <label class="switch">
+            <span class="text">
+              <span class="name">Fit page width</span>
+              <span class="tiny">Scale the layout to the sheet instead of clipping it</span>
+            </span>
+            <input type="checkbox" id="fitWidth" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Print backgrounds</span>
+              <span class="tiny">Keep background colours and images</span>
+            </span>
+            <input type="checkbox" id="printBackground" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Keep blocks whole</span>
+              <span class="tiny">Avoid splitting images, tables and code across sheets</span>
+            </span>
+            <input type="checkbox" id="avoidBreakingElements" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Expand scroll areas</span>
+              <span class="tiny">Reveal panes that only show part of their content</span>
+            </span>
+            <input type="checkbox" id="expandScrollers" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Clear overlays</span>
+              <span class="tiny">Remove cookie walls, chat bubbles and sticky bars</span>
+            </span>
+            <input type="checkbox" id="declutter" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Keep links clickable</span>
+              <span class="tiny">Also adds link areas to snapshot PDFs</span>
+            </span>
+            <input type="checkbox" id="keepLinks" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">One continuous page</span>
+              <span class="tiny">A single tall sheet with no breaks</span>
+            </span>
+            <input type="checkbox" id="singlePage" /><span class="track"></span>
+          </label>
+          <label class="switch">
+            <span class="text">
+              <span class="name">Reader mode by default</span>
+              <span class="tiny">Article only, in book typography</span>
+            </span>
+            <input type="checkbox" id="readerMode" /><span class="track"></span>
+          </label>
+        </div>
+        <div class="grid" style="margin-top: 14px">
+          <div class="field">
+            <span class="label">Layout width</span>
+            <input type="number" id="forceWidth" min="0" max="3840" step="10" placeholder="0" />
+            <span class="tiny">Render at this many pixels wide. Leave 0 to use the window.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass panel">
+        <h2>Header and footer</h2>
+        <p class="sub">Printed into the margin of every sheet in text mode.</p>
+        <label class="switch" style="margin-bottom: 10px">
+          <span class="text"><span class="name">Show header and footer</span></span>
+          <input type="checkbox" id="headerFooter" /><span class="track"></span>
+        </label>
+        <div class="grid">
+          <div class="field">
+            <span class="label">Header</span>
+            <input type="text" id="headerText" />
+          </div>
+          <div class="field">
+            <span class="label">Footer</span>
+            <input type="text" id="footerText" />
+          </div>
+        </div>
+        <div class="tokens" data-target="headerText">
+          <code>{title}</code><code>{url}</code><code>{page}</code><code>{total}</code
+          ><code>{date}</code>
+        </div>
+      </section>
+
+      <section class="glass panel">
+        <h2>Snapshot quality</h2>
+        <p class="sub">Only used when a capture runs in snapshot mode.</p>
+        <div class="grid">
+          <div class="field">
+            <span class="label">Resolution</span>
+            <div class="range">
+              <input type="range" id="snapshotScale" min="1" max="4" step="0.5" />
+              <output id="snapshotScaleOut"></output>
+            </div>
+            <span class="tiny">Higher is sharper and heavier. 2 matches a retina screen.</span>
+          </div>
+          <div class="field">
+            <span class="label">Compression</span>
+            <div class="range">
+              <input type="range" id="snapshotQuality" min="40" max="100" step="1" />
+              <output id="snapshotQualityOut"></output>
+            </div>
+            <span class="tiny">Ignored when lossless is on.</span>
+          </div>
+        </div>
+        <label class="switch" style="margin-top: 8px">
+          <span class="text">
+            <span class="name">Lossless</span>
+            <span class="tiny">Pixel exact, noticeably larger files</span>
+          </span>
+          <input type="checkbox" id="snapshotLossless" /><span class="track"></span>
+        </label>
+      </section>
+
+      <section class="glass panel">
+        <h2>Saving</h2>
+        <p class="sub">Where the file lands and what it is called.</p>
+        <div class="grid">
+          <div class="field">
+            <span class="label">File name</span>
+            <input type="text" id="filenameTemplate" />
+            <div class="tokens" data-target="filenameTemplate">
+              <code>{title}</code><code>{domain}</code><code>{host}</code><code>{path}</code
+              ><code>{date}</code><code>{time}</code>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label">Subfolder in Downloads</span>
+            <input type="text" id="subfolder" placeholder="Leave empty for Downloads" />
+          </div>
+        </div>
+        <label class="switch" style="margin-top: 10px">
+          <span class="text"><span class="name">Ask where to save each time</span></span>
+          <input type="checkbox" id="askWhereToSave" /><span class="track"></span>
+        </label>
+      </section>
+
+      <section class="glass panel">
+        <h2>Site presets</h2>
+        <p class="sub">Sites that always use their own settings. Saved from the popup.</p>
+        <table class="presets" id="presetTable" hidden>
+          <thead>
+            <tr>
+              <th>Site</th>
+              <th>Settings</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="presetBody"></tbody>
+        </table>
+        <p class="empty" id="presetEmpty">No site presets yet.</p>
+      </section>
+
+      <section class="glass panel kofi-panel">
+        <div class="kofi-card-content">
+          <div>
+            <h2>Support Page2Copier</h2>
+            <p class="sub" style="margin: 0;">
+              If Page2Copier helps your workflow, consider supporting development on Ko-fi!
+            </p>
+          </div>
+          <a
+            href="https://ko-fi.com/D4R428HJJJ"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn kofi-btn"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71 1.051-1.142 3.008-.844 4.349.52 1.355-1.428 3.256-1.637 4.304-.543 1.026 1.052.595 2.802-.097 3.798zm6.546-1.488c-.371.371-.871.602-1.407.652.128-1.574.148-3.064.127-4.225.864.062 1.579.527 1.83 1.258.337.981.047 1.718-.55 2.315z"/>
+            </svg>
+            Support me on Ko-fi
+          </a>
+        </div>
+      </section>
+
+      <section class="glass panel">
+        <h2>Shortcuts</h2>
+        <p class="sub">
+          Alt+Shift+P saves as PDF, Alt+Shift+S saves as HTML, Alt+Shift+I saves as PNG, and Alt+Shift+E opens the element picker. Configure or assign more shortcuts on the
+          <a href="#" id="shortcutsLink">browser shortcuts page</a>.
+        </p>
+      </section>
+
+      <div class="bar">
+        <span class="saved" id="saved">Saved</span>
+        <button class="btn ghost" id="reset">Reset everything to defaults</button>
+      </div>
+    </div>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
